@@ -235,11 +235,11 @@ jobs:
                     <ol>
                         <li>git config --global user.name "Your Name"</li>
                         <li>git config --global user.email "you@example.com"</li>
-                        <li>ssh-keygen -t ed25519 -C "you@example.com" (or use rsa if needed)</li>
-                        <li>eval "$(ssh-agent -s)" &amp;&amp; ssh-add ~/.ssh/id_ed25519</li>
-                        <li>Copy the public key: cat ~/.ssh/id_ed25519.pub and add to GitHub SSH keys</li>
-                        <li>git init (if new repo) &amp; git remote add origin &lt;repo-url&gt;</li>
-                        <li>git add . &amp;&amp; git commit -m "Initial commit"</li>
+                        <li>git init</li>
+                        <li>git add .</li>
+                        <li>git status</li>
+                        <li>git commit -m "Initial commit"</li>
+                        <li>git log</li>  
                         <li>git push -u origin main (or your branch name)</li>
                     </ol>
                 </div>
