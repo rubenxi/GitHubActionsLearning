@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>What is GitHub Actions? 🚀</title>
+<style>
+    :root{
+        --bg1:#0f1724; --bg2:#071028;
+        --accent:#7c5cff; --accent2:#00e6a9;
+        --glass: rgba(255,255,255,0.06);
+        --card: rgba(255,255,255,0.03);
+        --glass-border: rgba(255,255,255,0.06);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%; margin:0; background:linear-gradient(135deg,var(--bg1),var(--bg2)); color:#e6eef8; -webkit-font-smoothing:antialiased}
+    .wrap{min-height:100vh; display:flex; align-items:center; justify-content:center; padding:48px;}
+    .grid{width:1100px; max-width:95vw; display:grid; grid-template-columns: 420px 1fr; gap:28px; align-items:start}
+    .panel{
+        background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+        border:1px solid var(--glass-border); border-radius:16px; padding:22px;
+        box-shadow: 0 8px 30px rgba(2,6,23,0.6); backdrop-filter: blur(8px);
+    }
+    header{display:flex; align-items:center; gap:14px}
+    .logo{
+        width:72px; height:72px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+        font-size:34px; background: linear-gradient(135deg,var(--accent),var(--accent2)); box-shadow: 0 8px 30px rgba(124,92,255,0.18); transform: rotate(-12deg);
+    }
+    h1{margin:0; font-size:20px; letter-spacing:-0.2px}
+    p.lead{margin:8px 0 0; color:#cfeafe; opacity:0.95}
+    .stat-row{display:flex; gap:12px; margin-top:18px}
+    .stat{
+        flex:1; background:var(--card); border-radius:12px; padding:10px; text-align:center; transition:transform .18s ease;
+    }
+    .stat:hover{transform:translateY(-6px)}
+    .stat .big{font-weight:700; font-size:18px}
+    .stat .muted{opacity:0.7; font-size:13px}
+    nav{display:flex; gap:8px; margin-top:18px}
+    .chip{padding:8px 12px; border-radius:999px; background:transparent; border:1px solid rgba(255,255,255,0.04); cursor:default; font-size:13px}
+    .cards{display:grid; gap:12px; margin-top:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); border-radius:12px; padding:14px; border:1px solid rgba(255,255,255,0.03); display:flex; gap:12px; align-items:flex-start}
+    .emoji{font-size:28px; width:48px; height:48px; display:grid; place-items:center; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))}
+    .card h3{margin:0; font-size:15px}
+    .card p{margin:6px 0 0; color:#cfeafe; opacity:0.88; font-size:13px}
+    /* git setup section (hidden by default) */
+    .git-setup{display:none; margin-top:12px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); border-radius:12px; padding:14px; border:1px solid rgba(255,255,255,0.03);}
+    .git-setup h3{margin:0 0 8px}
+    .git-setup ol{margin:0; padding-left:18px; color:#cfeafe; opacity:0.95; font-size:13px}
+    /* workflow column */
+    .flow-header{display:flex; justify-content:space-between; align-items:center}
+    .flow-title{font-size:18px; margin:0}
+    .workflow{margin-top:18px; display:flex; gap:12px; flex-direction:column}
+    .step{
+        display:flex; gap:12px; align-items:center; padding:14px; border-radius:12px; background:linear-gradient(90deg, rgba(124,92,255,0.06), rgba(0,230,169,0.02));
+        border:1px solid rgba(255,255,255,0.03); transition:transform .15s ease;
+    }
+    .step:hover{transform:translateY(-6px)}
+    .dot{width:12px; height:12px; border-radius:50%; background:linear-gradient(180deg,var(--accent),var(--accent2)); box-shadow:0 6px 20px rgba(0,0,0,0.5)}
+    .step h4{margin:0; font-size:14px}
+    .step p{margin:6px 0 0; font-size:13px; color:#cfeafe; opacity:0.9}
+    pre.yaml{
+        margin:16px 0 0; padding:14px; border-radius:10px; overflow:auto; background:#071028; border:1px solid rgba(124,92,255,0.06); color:#cce8ff; font-size:13px; line-height:1.45;
+    }
+    .cta{display:flex; gap:10px; margin-top:16px}
+    .btn{
+        padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer; border:none; background:linear-gradient(90deg,var(--accent),var(--accent2)); color:#071028;
+    }
+    .ghost{background:transparent; border:1px solid rgba(255,255,255,0.06); color:#dbefff}
+    footer{margin-top:18px; font-size:13px; color:#bcdffd; opacity:0.85}
+    @media (max-width:880px){
+        .grid{grid-template-columns:1fr; padding:0}
+        .wrap{padding:20px}
+    }
+    /* subtle floating animation */
+    .float{ animation:floaty 6s ease-in-out infinite }
+    @keyframes floaty {
+        0%{transform:translateY(0)}
+        50%{transform:translateY(-8px)}
+        100%{transform:translateY(0)}
+    }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div class="grid">
+        <div class="panel float" aria-hidden="false">
+            <header>
+                <div class="logo">⚙️</div>
+                <div>
+                    <h1>GitHub Actions — Automate your workflows 🚀</h1>
+                    <p class="lead">CI/CD, automation, and integrations that run right in your repo — triggered by events, scheduled, or manual.</p>
+                </div>
+            </header>
+
+            <div class="stat-row">
+                <div class="stat">
+                    <div class="big">Workflows</div>
+                    <div class="muted">Define automated processes</div>
+                </div>
+                <div class="stat">
+                    <div class="big">Jobs & Steps</div>
+                    <div class="muted">Compose tasks in parallel or sequence</div>
+                </div>
+                <div class="stat">
+                    <div class="big">Runners</div>
+                    <div class="muted">Linux, macOS, Windows, or self-hosted</div>
+                </div>
+            </div>
+
+            <nav>
+                <div class="chip">YAML-based</div>
+                <div class="chip">Events-driven</div>
+                <div class="chip">Marketplace</div>
+                <div class="chip">Secrets & Envs</div>
+            </nav>
+
+            <div class="cards">
+                <div class="card">
+                    <div class="emoji">📦</div>
+                    <div>
+                        <h3>Build & Test</h3>
+                        <p>Run your build, unit tests, and linters on every push or pull request — catch issues early.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="emoji">🚚</div>
+                    <div>
+                        <h3>Deploy</h3>
+                        <p>Deploy to staging or production after passing checks — blue/green, canary, or simple push.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="emoji">🧩</div>
+                    <div>
+                        <h3>Integrate</h3>
+                        <p>Use Marketplace actions to integrate test suites, notifications, cloud providers, and more.</p>
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <div>Made to demystify GitHub Actions • Emojis included for extra flair ✨</div>
+            </footer>
+        </div>
+
+        <div class="panel">
+            <div class="flow-header">
+                <div>
+                    <h2 class="flow-title">Typical Workflow Example • Push → Build → Test → Deploy 🔁</h2>
+                    <p style="margin:6px 0 0; opacity:0.9; color:#cfeafe">A clear, visual runbook of what happens when code changes.</p>
+                </div>
+                <div style="text-align:right">
+                    <div style="font-size:13px; color:#dbefff; opacity:0.85">Event: on: push</div>
+                    <div style="font-size:12px; color:#cfeafe; opacity:0.75">Runs on: ubuntu-latest</div>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="step">
+                    <div class="dot" aria-hidden="true"></div>
+                    <div>
+                        <h4>Checkout code 🗂️</h4>
+                        <p>Use actions/checkout to fetch the repository to the runner.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="dot" aria-hidden="true"></div>
+                    <div>
+                        <h4>Install dependencies ⚙️</h4>
+                        <p>Set up Node, Python, Go, or other runtimes and install packages.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="dot" aria-hidden="true"></div>
+                    <div>
+                        <h4>Run tests 🧪</h4>
+                        <p>Execute unit/integration tests; fail fast to prevent bad merges.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="dot" aria-hidden="true"></div>
+                    <div>
+                        <h4>Deploy 🚀</h4>
+                        <p>Push artifacts to environments, containers to registries, or trigger releases.</p>
+                    </div>
+                </div>
+
+                <pre class="yaml" aria-label="sample workflow"><code>name: CI
+
+on:
+    push:
+        branches: [ main ]
+    pull_request:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+                uses: actions/checkout@v4
+
+            - name: Set up Node.js
+                uses: actions/setup-node@v4
+                with:
+                    node-version: '18'
+
+            - name: Install dependencies
+                run: npm ci
+
+            - name: Run tests
+                run: npm test
+
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        if: github.ref == 'refs/heads/main'
+        steps:
+            - name: Deploy to production
+                run: echo "Deploying..."</code></pre>
+
+                <div class="cta">
+                    <button class="btn" onclick="toggleYAML()">Toggle YAML Preview</button>
+                    <button class="btn ghost" onclick="copyYAML()">Copy YAML</button>
+                    <button class="btn ghost" onclick="toggleGit()">Show Git Setup</button>
+                </div>
+
+                <div id="git-setup" class="git-setup" aria-hidden="true">
+                    <h3>Configure Git — Step-by-step</h3>
+                    <ol>
+                        <li>git config --global user.name "Your Name"</li>
+                        <li>git config --global user.email "you@example.com"</li>
+                        <li>ssh-keygen -t ed25519 -C "you@example.com" (or use rsa if needed)</li>
+                        <li>eval "$(ssh-agent -s)" &amp;&amp; ssh-add ~/.ssh/id_ed25519</li>
+                        <li>Copy the public key: cat ~/.ssh/id_ed25519.pub and add to GitHub SSH keys</li>
+                        <li>git init (if new repo) &amp; git remote add origin &lt;repo-url&gt;</li>
+                        <li>git add . &amp;&amp; git commit -m "Initial commit"</li>
+                        <li>git push -u origin main (or your branch name)</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleYAML(){
+        const pre = document.querySelector('pre.yaml');
+        pre.style.display = (pre.style.display === 'none') ? 'block' : 'none';
+    }
+    async function copyYAML(){
+        const pre = document.querySelector('pre.yaml code');
+        try{
+            await navigator.clipboard.writeText(pre.innerText);
+            const b = document.querySelector('.btn.ghost');
+            const old = b.innerText;
+            b.innerText = 'Copied ✓';
+            setTimeout(()=> b.innerText = old,1500);
+        }catch(e){
+            alert('Copy failed');
+        }
+    }
+    // initialize
+    document.querySelector('pre.yaml').style.display = 'block';
+    document.getElementById('git-setup').style.display = 'none';
+
+    function toggleGit(){
+        const el = document.getElementById('git-setup');
+        el.style.display = (el.style.display === 'none' || !el.style.display) ? 'block' : 'none';
+        if(el.style.display === 'block'){
+            el.scrollIntoView({behavior:'smooth', block:'center'});
+        }
+    }
+</script>
+</body>
+</html>
