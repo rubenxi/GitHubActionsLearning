@@ -1,4 +1,4 @@
-name: loop
+name: test_loop_noapi
 
 on:
   workflow_dispatch:
@@ -37,6 +37,6 @@ jobs:
   recurse:
     needs: loop_job
     if: ${{ steps.calc.outputs.next > 0 }}
-    uses: ./.github/workflows/loop.yml
+    uses: ./.github/workflows/test_loop_noapi.yml
     with:
       counter: ${{ steps.calc.outputs.next }}
