@@ -1,3 +1,7 @@
+permissions:
+  actions: write
+  contents: read
+
 name: test_loop
 
 on:
