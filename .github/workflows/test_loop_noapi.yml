@@ -11,15 +11,17 @@ on:
     inputs:
       counter:
         required: true
-        type: string
+        type: number 
 
 jobs:
-  loop:
+  loop_job:
     runs-on: ubuntu-latest
 
     steps:
       - name: Show counter
-        run: echo "Counter is ${{ inputs.counter || github.event.inputs.counter }}"
+        run: |
+          CURRENT=${{ inputs.counter || github.event.inputs.counter }}
+          echo "Counter is $CURRENT"
 
       - name: Calculate next
         id: calc
@@ -28,12 +30,13 @@ jobs:
           NEXT=$((CURRENT - 1))
           echo "next=$NEXT" >> $GITHUB_OUTPUT
 
-      - name: Recursive call
-        if: ${{ steps.calc.outputs.next > 0 }}
-        uses: ./.github/workflows/test_loop_noapi.yml
-        with:
-          counter: ${{ steps.calc.outputs.next }}
-
-      - name: End
+      - name: End of loop
         if: ${{ steps.calc.outputs.next == 0 }}
         run: echo "end of loop"
+
+  recurse:
+    needs: loop_job
+    if: ${{ steps.calc.outputs.next > 0 }}
+    uses: ./.github/workflows/loop.yml
+    with:
+      counter: ${{ steps.calc.outputs.next }}
