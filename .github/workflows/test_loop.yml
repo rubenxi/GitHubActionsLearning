@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       counter:
-        description: "counter n"
+        description: "loop using api"
         required: true
         default: "4"
 
@@ -40,3 +40,6 @@ jobs:
                 "counter": "${{ steps.calc.outputs.next }}"
               }
             }'
+      - name: End of loop
+        if: ${{ steps.calc.outputs.next == 0 }}
+        run: echo "end of loop"
