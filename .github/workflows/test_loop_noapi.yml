@@ -1,0 +1,39 @@
+name: loop
+
+on:
+  workflow_dispatch:
+    inputs:
+      counter:
+        required: true
+        default: "4"
+
+  workflow_call:
+    inputs:
+      counter:
+        required: true
+        type: string
+
+jobs:
+  loop:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Show counter
+        run: echo "Counter is ${{ inputs.counter || github.event.inputs.counter }}"
+
+      - name: Calculate next
+        id: calc
+        run: |
+          CURRENT=${{ inputs.counter || github.event.inputs.counter }}
+          NEXT=$((CURRENT - 1))
+          echo "next=$NEXT" >> $GITHUB_OUTPUT
+
+      - name: Recursive call
+        if: ${{ steps.calc.outputs.next > 0 }}
+        uses: ./.github/workflows/loop.yml
+        with:
+          counter: ${{ steps.calc.outputs.next }}
+
+      - name: End
+        if: ${{ steps.calc.outputs.next == 0 }}
+        run: echo "end of loop"
