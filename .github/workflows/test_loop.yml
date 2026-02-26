@@ -1,4 +1,4 @@
-name: loop workflow
+name: test_loop
 
 on:
   workflow_dispatch:
